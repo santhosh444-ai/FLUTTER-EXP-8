@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Data Persistence</title>
+  <!-- Material Symbols for the edit & delete icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      padding-bottom: 60px;
+    }
+    /* Top Header Bar */
+    .top-bar {
+      background: #edeef2;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 15px;
+      font-weight: 500;
+      border-bottom: 1px solid #ddd;
+    }
+    .container {
+      max-width: 900px;
+      margin: 25px auto;
+      padding: 0 20px;
+    }
+    /* Titles */
+    .header-group {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .main-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .sub-title {
+      font-size: 12px;
+      color: #777;
+    }
+    /* Card / Container Blocks */
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .list-section-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 14px;
+    }
+    /* Form Elements */
+    .input-box {
+      display: flex;
+      align-items: center;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+    .input-box span {
+      color: #718096;
+      margin-right: 12px;
+      font-size: 20px;
+    }
+    .input-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 14px;
+      color: #2d3748;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 11px;
+      background-color: transparent;
+      color: #4a5568;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover {
+      background-color: #edf2f7;
+    }
+    /* List Tile */
+    .student-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .item-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .badge-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #ebf0f7;
+      color: #4a5568;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .badge-cloud {
+      background-color: #5c6bc0;
+      color: #ffffff;
+    }
+    .student-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 2px;
+    }
+    .student-info p {
+      font-size: 12px;
+      color: #718096;
+    }
+    .item-actions {
+      display: flex;
+      gap: 12px;
+      color: #4a5568;
+      cursor: pointer;
+    }
+    .item-actions span {
+      font-size: 18px;
+    }
+    .item-actions span:hover {
+      color: #e53e3e;
+    }
+    .empty-text {
+      font-size: 13px;
+      color: #a0aec0;
+      text-align: center;
+      padding: 16px;
+    }
+    /* Refresh button */
+    .btn-refresh {
+      background: none;
+      border: none;
+      color: #4299e1;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      margin: 10px auto 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">Student Data Persistence</div>
+
+  <div class="container">
+    <div class="header-group">
+      <div class="main-title">SQLite + Firebase</div>
+      <div class="sub-title">Web • SQLite WASM + Firebase</div>
+    </div>
+
+    <!-- Input Card -->
+    <div class="card">
+      <div class="section-title">Add Student</div>
+      <div class="input-box">
+        <span class="material-symbols-outlined">person</span>
+        <input type="text" id="nameInput" placeholder="Student Name" />
+      </div>
+      <div class="input-box">
+        <span class="material-symbols-outlined">school</span>
+        <input type="text" id="courseInput" placeholder="Course" />
+      </div>
+      <button class="btn-submit" onclick="addStudent()">
+        <span class="material-symbols-outlined" style="font-size:16px;">add</span> Save to SQLite + Firebase
+      </button>
+    </div>
+
+    <!-- SQLite Section -->
+    <div class="list-section-title">SQLite - Local Storage</div>
+    <div class="card" id="sqliteContainer">
+      <div id="sqliteList">
+        <!-- Default item -->
+        <div class="student-item" id="sql-item-1">
+          <div class="item-left">
+            <div class="badge-icon">1</div>
+            <div class="student-info">
+              <h4>Santhosh S</h4>
+              <p>CSE</p>
+            </div>
+          </div>
+          <div class="item-actions">
+            <span class="material-symbols-outlined">edit</span>
+            <span class="material-symbols-outlined" onclick="deleteItem('sql-item-1')">delete</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-refresh">
+        <span class="material-symbols-outlined" style="font-size: 14px;">sync</span> Refresh SQLite
+      </button>
+    </div>
+
+    <!-- Firebase Section -->
+    <div class="list-section-title">Firebase - Cloud Storage</div>
+    <div class="card" id="firebaseContainer">
+      <div id="firebaseList">
+        <!-- Items matching output style -->
+        <div class="student-item" id="fb-item-1">
+          <div class="item-left">
+            <div class="badge-icon badge-cloud">
+              <span class="material-symbols-outlined" style="font-size:18px;">cloud</span>
+            </div>
+            <div class="student-info">
+              <h4>Santhosh S</h4>
+              <p>CSE</p>
+            </div>
+          </div>
+          <div class="item-actions">
+            <span class="material-symbols-outlined">edit</span>
+            <span class="material-symbols-outlined" onclick="deleteItem('fb-item-1')">delete</span>
+          </div>
+        </div>
+
+        <div class="student-item" id="fb-item-2">
+          <div class="item-left">
+            <div class="badge-icon badge-cloud">
+              <span class="material-symbols-outlined" style="font-size:18px;">cloud</span>
+            </div>
+            <div class="student-info">
+              <h4>Arun</h4>
+              <p>ECE</p>
+            </div>
+          </div>
+          <div class="item-actions">
+            <span class="material-symbols-outlined">edit</span>
+            <span class="material-symbols-outlined" onclick="deleteItem('fb-item-2')">delete</span>
+          </div>
+        </div>
+
+        <div class="student-item" id="fb-item-3">
+          <div class="item-left">
+            <div class="badge-icon badge-cloud">
+              <span class="material-symbols-outlined" style="font-size:18px;">cloud</span>
+            </div>
+            <div class="student-info">
+              <h4>Sam</h4>
+              <p>Mech</p>
+            </div>
+          </div>
+          <div class="item-actions">
+            <span class="material-symbols-outlined">edit</span>
+            <span class="material-symbols-outlined" onclick="deleteItem('fb-item-3')">delete</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-refresh">
+        <span class="material-symbols-outlined" style="font-size: 14px;">sync</span> Refresh Firebase
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    let counter = 2;
+    function addStudent() {
+      const name = document.getElementById('nameInput').value.trim();
+      const course = document.getElementById('courseInput').value.trim();
+
+      if (!name || !course) return;
+
+      // Append to SQLite list
+      const sqlList = document.getElementById('sqliteList');
+      const sqlDiv = document.createElement('div');
+      sqlDiv.className = 'student-item';
+      const sqlId = 'sql-' + Date.now();
+      sqlDiv.id = sqlId;
+      sqlDiv.innerHTML = `
+        <div class="item-left">
+          <div class="badge-icon">${counter++}</div>
+          <div class="student-info">
+            <h4>${name}</h4>
+            <p>${course}</p>
+          </div>
+        </div>
+        <div class="item-actions">
+          <span class="material-symbols-outlined">edit</span>
+          <span class="material-symbols-outlined" onclick="deleteItem('${sqlId}')">delete</span>
+        </div>
+      `;
+      sqlList.appendChild(sqlDiv);
+
+      // Append to Firebase list
+      const fbList = document.getElementById('firebaseList');
+      const fbDiv = document.createElement('div');
+      fbDiv.className = 'student-item';
+      const fbId = 'fb-' + Date.now();
+      fbDiv.id = fbId;
+      fbDiv.innerHTML = `
+        <div class="item-left">
+          <div class="badge-icon badge-cloud">
+            <span class="material-symbols-outlined" style="font-size:18px;">cloud</span>
+          </div>
+          <div class="student-info">
+            <h4>${name}</h4>
+            <p>${course}</p>
+          </div>
+        </div>
+        <div class="item-actions">
+          <span class="material-symbols-outlined">edit</span>
+          <span class="material-symbols-outlined" onclick="deleteItem('${fbId}')">delete</span>
+        </div>
+      `;
+      fbList.appendChild(fbDiv);
+
+      // Reset
+      document.getElementById('nameInput').value = '';
+      document.getElementById('courseInput').value = '';
+    }
+
+    function deleteItem(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+  </script>
+</body>
+</html>
